@@ -1,0 +1,14 @@
+Pertemuan 01 TEKDAS 
+Nama 	: Dorene Velincya
+NRP 	: 2373014
+
+1. Lapisan mana yang paling saya pahami?
+2. Lapisan mana yang masih saya campuradukkan?
+3. Bukti apa yang membuat sebuah sistem layak disebut “cerdas” dan bertanggung jawab? 
+
+Jawaban : 
+1. Saya paling memahami lapisan Quarto dan proses rendering. Saya memahami bahwa Quarto digunakan untuk mengolah file .qmd menjadi output seperti HTML atau PDF. Saya juga memahami bahwa perintah quarto render digunakan untuk merender seluruh proyek, sedangkan file tertentu dapat dirender dengan menentukan nama file .qmd
+
+2. Saya masih agak mencampuradukkan Python, virtual environment (.venv), dan requirements.txt. Saya memahami bahwa Python digunakan sebagai bahasa/program pendukung, .venv berfungsi memisahkan lingkungan dan paket proyek dari Python global, sedangkan requirements.txt berisi paket yang perlu diinstal untuk proyek. Namun, saya masih perlu memahami lebih jelas hubungan ketiganya ketika Quarto menjalankan kode Python.
+
+3. Sebuah sistem tidak cukup disebut cerdas hanya karena dapat menghasilkan jawaban. Sistem tersebut perlu menunjukkan bahwa ia dapat menjalankan tugas sesuai tujuan, memberikan hasil yang dapat diperiksa, dan digunakan secara bertanggung jawab. Dalam praktik hari ini, salah satu buktinya adalah model Ollama dapat menerima prompt dan memberikan jawaban, tetapi hasilnya tetap perlu diuji dan diperiksa oleh pengguna.
