@@ -1,0 +1,88 @@
+---
+title: "Laporan Data dan Persiapan Dataset Pelanggan"
+subtitle: "Ringkasan diskusi tentang data e-commerce dan prediksi churn"
+lang: id
+format:
+  pdf:
+    documentclass: article
+    papersize: a4
+    geometry: margin=2.2cm
+    toc: true
+    number-sections: true
+    colorlinks: true
+---
+
+## Ringkasan
+
+Laporan ini menjelaskan empat file CSV sumber, alur kerja pada `data_prep.py`, serta isi dan struktur tiga dataset yang dihasilkan. Data tersebut digunakan untuk latihan machine learning yang memprediksi apakah seorang pelanggan mengalami churn. Satu baris pada tabel pelanggan mewakili satu pelanggan; satu baris pada tabel pesanan mewakili satu pesanan.
+
+Menurut `data_quality_report.json`, data sumber mencakup **8.000 pelanggan**, **25.000 pesanan**, **140 baris ringkasan produk**, dan **75 baris ringkasan bulanan**. Dataset pelanggan kemudian dibagi menjadi **6.400 baris train** dan **1.600 baris test**.
+
+## File data sumber
+
+### `customers.csv`
+
+Berisi satu baris per pelanggan. Kolomnya mencakup identitas pelanggan, negara, usia, gender, tier keanggotaan, tanggal registrasi, jumlah pesanan, total dan rata-rata belanja, waktu sejak pembelian terakhir, preferensi belanja, aktivitas ulasan dan retur, jumlah item wishlist, langganan newsletter, serta target `churned` (0 atau 1).
+
+Contoh baris pertama: pelanggan `C00001` berasal dari United States, berusia 40 tahun, memiliki 4 pesanan, dan nilai `churned` sebesar 0.
+
+### `orders.csv`
+
+Berisi rincian setiap pesanan. Kolomnya meliputi ID pesanan dan pelanggan, tanggal, tahun/bulan/kuartal, produk dan kategori, harga dan kuantitas, subtotal, diskon, ongkos kirim, pajak, total pembayaran, metode pembayaran, perangkat, waktu pengiriman, status pesanan, penanda retur, rating pelanggan, aktivitas sesi sebelum pembelian, dan penanda pelanggan berulang.
+
+### `product_summary.csv`
+
+Berisi ringkasan per produk dan kategori: jumlah pesanan, total pendapatan, harga dan rating rata-rata, tingkat retur, diskon rata-rata, serta rata-rata lama pengiriman.
+
+### `monthly_revenue.csv`
+
+Berisi ringkasan per bulan dan tahun, termasuk kuartal, jumlah pesanan, pendapatan, nilai pesanan rata-rata, diskon rata-rata, tingkat retur, jumlah pelanggan unik, dan pelanggan baru. Catatan pada `data_prep.py` menyebut pendapatan bulanan merangkum pesanan berstatus terkirim. Karena itu, `return_rate` pada file ini bernilai nol; untuk analisis retur, gunakan `orders.csv`.
+
+## Proses pada `data_prep.py`
+
+Script memuat empat CSV sumber dan memeriksa keberadaan kolom wajib. Setelah itu, script mengubah tanggal registrasi dan pesanan menjadi tanggal, lalu menetapkan tanggal snapshot berdasarkan tanggal terbaru yang terlihat pada data.
+
+Untuk setiap pelanggan, script menyiapkan fitur turunan berikut:
+
+- `customer_tenure_days`: jumlah hari sejak registrasi sampai tanggal snapshot.
+- `orders_per_year`: jumlah pesanan dibagi perkiraan lama menjadi pelanggan dalam tahun.
+- `reviews_per_order`: jumlah ulasan dibagi jumlah pesanan.
+- `returns_per_order`: jumlah retur dibagi jumlah pesanan.
+
+Nilai kategori tetap berupa teks pada file keluaran. Encoding kategori dilakukan dalam pipeline scikit-learn di `ml_model.py`, sehingga dapat dipelajari dari data train. Target `churned` dikonversi menjadi bilangan bulat. Pembagian train/test menggunakan rasio 80/20, `random_state=42`, dan stratifikasi berdasarkan target agar proporsi churn terjaga.
+
+## Struktur dataset hasil
+
+Ketiga file keluaran memiliki kolom yang sama dan setiap baris mewakili satu pelanggan.
+
+| Kelompok | Kolom |
+|---|---|
+| Identitas | `customer_id` |
+| Kategori (7) | `country`, `gender`, `membership_tier`, `preferred_category`, `preferred_device`, `preferred_payment_method`, `acquisition_channel` |
+| Fitur numerik sumber (10) | `age`, `total_orders`, `total_spend_usd`, `avg_order_value_usd`, `days_since_last_purchase`, `reviews_given`, `avg_review_score`, `returns_made`, `wishlist_items`, `newsletter_subscribed` |
+| Fitur turunan (4) | `customer_tenure_days`, `orders_per_year`, `reviews_per_order`, `returns_per_order` |
+| Target | `churned` |
+
+Jumlah fitur model sebelum one-hot encoding adalah **21**: 7 kategori dan 14 numerik. Kolom `customer_id` disertakan agar baris dapat ditelusuri, tetapi bukan bagian dari daftar fitur model.
+
+### `customer_ml_dataset.csv`
+
+Dataset lengkap setelah fitur turunan ditambahkan. Berdasarkan laporan kualitas data, file ini berisi 8.000 baris pelanggan.
+
+### `customer_train.csv`
+
+Bagian untuk melatih model, berisi 6.400 baris (80% dari data).
+
+### `customer_test.csv`
+
+Bagian untuk mengevaluasi model pada data yang ditahan, berisi 1.600 baris (20% dari data).
+
+## Catatan kualitas data
+
+Laporan kualitas mencatat tingkat churn pelanggan sebesar **8,94%**, tingkat retur pesanan sebesar **8,08%**, dan rating kosong pada **63%** baris pesanan. Dari 25.000 pesanan, 20.497 berstatus terkirim dengan pendapatan tercatat sebesar **USD 2.585.126,50**. Pemeriksaan agregat menyatakan total pendapatan ringkasan produk cocok dengan total pesanan non-batal, dan pendapatan bulanan cocok dengan pendapatan pesanan terkirim.
+
+Tanggal snapshot yang tercatat adalah **1 April 2026**. Angka dan struktur dalam laporan ini merujuk pada file yang ada di folder `simulation` saat laporan disusun.
+
+## Ringkasan akhir
+
+Empat file sumber menyediakan data pelanggan, pesanan, ringkasan produk, dan ringkasan bulanan. Script `data_prep.py` memvalidasi sumber, menambah empat fitur turunan pelanggan, lalu menyimpan dataset lengkap beserta pembagian train dan test. Ketiga hasil memiliki struktur kolom serupa, dengan `churned` sebagai target klasifikasi.

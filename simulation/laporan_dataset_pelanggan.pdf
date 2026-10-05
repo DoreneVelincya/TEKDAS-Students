@@ -1,0 +1,111 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Length 4961 >>
+stream
+BT /F2 18 Tf 52 790 Td (LAPORAN DATA DAN PERSIAPAN DATASET PELANGGAN) Tj ET
+BT /F1 9.5 Tf 52 758.9 Td (Ringkasan diskusi tentang data e-commerce dan prediksi churn) Tj ET
+BT /F2 13 Tf 52 738.125 Td (Ringkasan) Tj ET
+BT /F1 9.5 Tf 52 717.275 Td (Laporan ini menjelaskan empat file CSV sumber, alur kerja pada data_prep.py, serta isi dan) Tj ET
+BT /F1 9.5 Tf 52 703.5 Td (struktur tiga dataset hasil. Data digunakan untuk latihan machine learning yang memprediksi) Tj ET
+BT /F1 9.5 Tf 52 689.725 Td (churn pelanggan. Satu baris pada tabel pelanggan mewakili satu pelanggan; satu baris pada) Tj ET
+BT /F1 9.5 Tf 52 675.95 Td (tabel pesanan mewakili satu pesanan.) Tj ET
+BT /F1 9.5 Tf 52 658.1750000000001 Td (Data sumber: 8.000 pelanggan, 25.000 pesanan, 140 baris ringkasan produk, dan 75 baris) Tj ET
+BT /F1 9.5 Tf 52 644.4000000000001 Td (ringkasan bulanan. Dataset dibagi menjadi 6.400 baris train dan 1.600 baris test.) Tj ET
+BT /F2 13 Tf 52 623.6250000000001 Td (1. File data sumber) Tj ET
+BT /F2 11 Tf 52 602.7750000000001 Td (customers.csv) Tj ET
+BT /F1 9.5 Tf 52 586.825 Td (Satu baris per pelanggan. Kolom mencakup ID, negara, usia, gender, tier keanggotaan,) Tj ET
+BT /F1 9.5 Tf 52 573.0500000000001 Td (tanggal registrasi, jumlah pesanan, total dan rata-rata belanja, waktu sejak pembelian) Tj ET
+BT /F1 9.5 Tf 52 559.2750000000001 Td (terakhir, preferensi belanja, ulasan, retur, wishlist, langganan newsletter, dan target) Tj ET
+BT /F1 9.5 Tf 52 545.5000000000001 Td (churned \(0 atau 1\). Contoh: C00001 berasal dari United States, berusia 40 tahun, memiliki 4) Tj ET
+BT /F1 9.5 Tf 52 531.7250000000001 Td (pesanan, dan churned = 0.) Tj ET
+BT /F2 11 Tf 52 513.9500000000002 Td (orders.csv) Tj ET
+BT /F1 9.5 Tf 52 498.00000000000017 Td (Satu baris per pesanan. Kolom mencakup ID pesanan dan pelanggan, tanggal dan periode,) Tj ET
+BT /F1 9.5 Tf 52 484.2250000000002 Td (produk/kategori, harga dan kuantitas, subtotal, diskon, ongkos kirim, pajak, total) Tj ET
+BT /F1 9.5 Tf 52 470.4500000000002 Td (pembayaran, metode pembayaran, perangkat, lama pengiriman, status, retur, rating, aktivitas) Tj ET
+BT /F1 9.5 Tf 52 456.67500000000024 Td (sesi, dan penanda pelanggan berulang.) Tj ET
+BT /F2 11 Tf 52 438.90000000000026 Td (product_summary.csv) Tj ET
+BT /F1 9.5 Tf 52 422.9500000000003 Td (Ringkasan per produk dan kategori: jumlah pesanan, total pendapatan, harga dan rating rata-) Tj ET
+BT /F1 9.5 Tf 52 409.1750000000003 Td (rata, tingkat retur, diskon rata-rata, serta rata-rata lama pengiriman.) Tj ET
+BT /F2 11 Tf 52 391.4000000000003 Td (monthly_revenue.csv) Tj ET
+BT /F1 9.5 Tf 52 375.45000000000033 Td (Ringkasan per bulan dan tahun: kuartal, jumlah pesanan, pendapatan, nilai pesanan rata-) Tj ET
+BT /F1 9.5 Tf 52 361.67500000000035 Td (rata, diskon rata-rata, tingkat retur, jumlah pelanggan unik, dan pelanggan baru. File) Tj ET
+BT /F1 9.5 Tf 52 347.9000000000004 Td (merangkum pesanan terkirim; return_rate bernilai nol. Gunakan orders.csv untuk analisis) Tj ET
+BT /F1 9.5 Tf 52 334.1250000000004 Td (retur.) Tj ET
+BT /F2 13 Tf 52 313.3500000000004 Td (2. Proses pada data_prep.py) Tj ET
+BT /F1 9.5 Tf 52 292.5000000000004 Td (Script membaca empat CSV dan memvalidasi kolom wajib. Tanggal diubah ke format tanggal,) Tj ET
+BT /F1 9.5 Tf 52 278.7250000000004 Td (lalu tanggal snapshot ditetapkan dari tanggal terbaru di sumber data. Script membuat) Tj ET
+BT /F1 9.5 Tf 52 264.95000000000044 Td (customer_tenure_days \(lama menjadi pelanggan\), orders_per_year, reviews_per_order, dan) Tj ET
+BT /F1 9.5 Tf 52 251.17500000000044 Td (returns_per_order.) Tj ET
+BT /F1 9.5 Tf 52 233.40000000000043 Td (Target churned dikonversi menjadi integer. Kategori tetap berupa teks; encoding dilakukan) Tj ET
+BT /F1 9.5 Tf 52 219.62500000000043 Td (di pipeline scikit-learn pada ml_model.py. Pembagian data memakai rasio 80/20,) Tj ET
+BT /F1 9.5 Tf 52 205.85000000000042 Td (random_state=42, dan stratifikasi berdasarkan target agar proporsi churn terjaga.) Tj ET
+BT /F2 13 Tf 52 185.07500000000041 Td (3. Struktur dataset hasil) Tj ET
+BT /F1 9.5 Tf 52 164.22500000000042 Td (Semua file hasil memiliki kolom yang sama. ID: customer_id. Kategori \(7\): country, gender,) Tj ET
+BT /F1 9.5 Tf 52 150.45000000000041 Td (membership_tier, preferred_category, preferred_device, preferred_payment_method,) Tj ET
+BT /F1 9.5 Tf 52 136.6750000000004 Td (acquisition_channel.) Tj ET
+BT /F1 9.5 Tf 52 118.9000000000004 Td (Numerik sumber \(10\): age, total_orders, total_spend_usd, avg_order_value_usd,) Tj ET
+BT /F1 9.5 Tf 52 105.1250000000004 Td (days_since_last_purchase, reviews_given, avg_review_score, returns_made, wishlist_items,) Tj ET
+BT /F1 9.5 Tf 52 91.35000000000039 Td (newsletter_subscribed.) Tj ET
+BT /F1 9.5 Tf 52 73.57500000000039 Td (Fitur turunan \(4\): customer_tenure_days, orders_per_year, reviews_per_order,) Tj ET
+BT /F1 9.5 Tf 52 59.80000000000039 Td (returns_per_order. Target: churned. Total 21 fitur model sebelum one-hot encoding \(7) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 1756 >>
+stream
+BT /F1 9.5 Tf 52 790 Td (kategori + 14 numerik\). customer_id disertakan untuk menelusuri baris, bukan sebagai fitur) Tj ET
+BT /F1 9.5 Tf 52 776.225 Td (model.) Tj ET
+BT /F2 11 Tf 52 758.45 Td (customer_ml_dataset.csv) Tj ET
+BT /F1 9.5 Tf 52 742.5 Td (Dataset lengkap setelah fitur turunan ditambahkan: 8.000 baris pelanggan.) Tj ET
+BT /F2 11 Tf 52 724.725 Td (customer_train.csv) Tj ET
+BT /F1 9.5 Tf 52 708.775 Td (Bagian untuk melatih model: 6.400 baris \(80%\).) Tj ET
+BT /F2 11 Tf 52 691.0 Td (customer_test.csv) Tj ET
+BT /F1 9.5 Tf 52 675.05 Td (Bagian untuk mengevaluasi model: 1.600 baris \(20%\).) Tj ET
+BT /F2 13 Tf 52 654.275 Td (4. Catatan kualitas data) Tj ET
+BT /F1 9.5 Tf 52 633.425 Td (Tingkat churn pelanggan 8,94%; tingkat retur pesanan 8,08%; rating kosong pada 63% pesanan.) Tj ET
+BT /F1 9.5 Tf 52 619.65 Td (Sebanyak 20.497 pesanan berstatus terkirim dengan pendapatan USD 2.585.126,50. Total) Tj ET
+BT /F1 9.5 Tf 52 605.875 Td (pendapatan ringkasan produk cocok dengan pesanan non-batal, dan total pendapatan bulanan) Tj ET
+BT /F1 9.5 Tf 52 592.1 Td (cocok dengan pesanan terkirim.) Tj ET
+BT /F1 9.5 Tf 52 574.325 Td (Tanggal snapshot pada laporan kualitas data: 1 April 2026. Angka merujuk pada file yang ada) Tj ET
+BT /F1 9.5 Tf 52 560.5500000000001 Td (di folder simulation saat laporan disusun.) Tj ET
+BT /F2 13 Tf 52 539.7750000000001 Td (Kesimpulan) Tj ET
+BT /F1 9.5 Tf 52 518.9250000000001 Td (Empat CSV sumber menyajikan data pelanggan, pesanan, produk, dan ringkasan bulanan.) Tj ET
+BT /F1 9.5 Tf 52 505.1500000000001 Td (data_prep.py memvalidasi sumber, menambah empat fitur turunan, lalu menyimpan dataset) Tj ET
+BT /F1 9.5 Tf 52 491.3750000000001 Td (lengkap dan pembagian train/test untuk latihan klasifikasi churn.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+8 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000214 00000 n 
+0000005227 00000 n 
+0000005363 00000 n 
+0000007171 00000 n 
+0000007307 00000 n 
+0000007370 00000 n 
+trailer
+<< /Size 9 /Root 8 0 R >>
+startxref
+7419
+%%EOF
