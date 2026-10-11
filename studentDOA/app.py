@@ -6,38 +6,13 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
+import joblib
+from sklearn.metrics import confusion_matrix
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_FILE = BASE_DIR / "studentDOA.csv"
+DATA_FILE = BASE_DIR / "studentDOA_prepared.csv"
+MODEL_FILE = BASE_DIR / "studentDOA_model.joblib"
 TARGET = "Target"
-
-# These fields are category codes in the source dataset, even though they are
-# represented by numbers. One-hot encoding avoids treating their codes as ranks.
-CATEGORICAL_COLUMNS = [
-    "Marital status",
-    "Application mode",
-    "Course",
-    "Daytime/evening attendance",
-    "Previous qualification",
-    "Nacionality",
-    "Mother's qualification",
-    "Father's qualification",
-    "Mother's occupation",
-    "Father's occupation",
-    "Displaced",
-    "Educational special needs",
-    "Debtor",
-    "Tuition fees up to date",
-    "Gender",
-    "Scholarship holder",
-    "International",
-]
 
 st.set_page_config(page_title="Student Dropout & Academic Success", layout="wide")
 st.title("Student Dropout & Academic Success")
@@ -49,48 +24,23 @@ st.caption(
 
 @st.cache_data
 def load_data():
+    if not DATA_FILE.exists():
+        st.error("Data belum disiapkan. Jalankan `python Data_Prev.py` terlebih dahulu.")
+        st.stop()
     data = pd.read_csv(DATA_FILE)
     data[TARGET] = data[TARGET].astype(str)
     return data
 
 
-@st.cache_resource
-def train_model(data: pd.DataFrame):
-    X = data.drop(columns=[TARGET])
-    y = data[TARGET]
-    categorical = [column for column in CATEGORICAL_COLUMNS if column in X.columns]
-    numeric = [column for column in X.columns if column not in categorical]
-
-    preprocess = ColumnTransformer(
-        transformers=[
-            ("categories", OneHotEncoder(handle_unknown="ignore"), categorical),
-            ("numbers", "passthrough", numeric),
-        ]
-    )
-    pipeline = Pipeline(
-        steps=[
-            ("preprocess", preprocess),
-            (
-                "classifier",
-                RandomForestClassifier(
-                    n_estimators=300,
-                    class_weight="balanced",
-                    random_state=42,
-                    n_jobs=-1,
-                ),
-            ),
-        ]
-    )
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=42, stratify=y
-    )
-    pipeline.fit(X_train, y_train)
-    prediction = pipeline.predict(X_test)
-    return pipeline, X_test, y_test, prediction
-
-
 data = load_data()
-model, X_test, y_test, test_prediction = train_model(data)
+if not MODEL_FILE.exists():
+    st.error("Model belum dibuat. Jalankan `python Ml_model.py` terlebih dahulu.")
+    st.stop()
+artifacts = joblib.load(MODEL_FILE)
+model = artifacts["model"]
+X_test = artifacts["X_test"]
+y_test = artifacts["y_test"]
+test_prediction = artifacts["prediction"]
 
 total, dropout_rate, graduate_rate, enrolled_rate = st.columns(4)
 total.metric("Jumlah mahasiswa", f"{len(data):,}")
@@ -138,7 +88,7 @@ with tabs[1]:
 with tabs[2]:
     st.subheader("Prediksi status mahasiswa")
     st.caption(
-        "Model Random Forest dilatih saat aplikasi berjalan. Evaluasi menggunakan "
+        "Model Random Forest dilatih oleh `Ml_model.py`. Evaluasi menggunakan "
         "pemisahan train/test 80/20 dengan stratifikasi status."
     )
     identifiers = data.index.tolist()
@@ -163,8 +113,8 @@ with tabs[2]:
 
     st.markdown("**Evaluasi pada data test**")
     accuracy, macro_f1 = st.columns(2)
-    accuracy.metric("Accuracy", f"{accuracy_score(y_test, test_prediction):.3f}")
-    report = classification_report(y_test, test_prediction, output_dict=True, zero_division=0)
+    accuracy.metric("Accuracy", f"{artifacts['accuracy']:.3f}")
+    report = artifacts["report"]
     macro_f1.metric("Macro F1", f"{report['macro avg']['f1-score']:.3f}")
     labels = list(model.classes_)
     matrix = confusion_matrix(y_test, test_prediction, labels=labels)
@@ -174,8 +124,7 @@ with tabs[2]:
         use_container_width=True,
     )
     st.dataframe(
-        pd.DataFrame(classification_report(y_test, test_prediction, output_dict=True,
-                                           zero_division=0)).T.round(3),
+        pd.DataFrame(report).T.round(3),
         use_container_width=True,
     )
     st.warning(
